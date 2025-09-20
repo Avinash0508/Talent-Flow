@@ -4,35 +4,34 @@ import useAssessments from "../../hooks/useAssessments";
 
 export default function AssessmentBuilder() {
   const { jobId } = useParams();
-  const { assessments, loading, saveAssessment } = useAssessments(jobId);
+  // Import the new deleteAssessment function from the hook
+  const { assessments, loading, saveAssessment, deleteAssessment } = useAssessments(jobId);
   
-  // State to track which assessment is currently being edited
   const [selectedAssessment, setSelectedAssessment] = useState(null);
-  
-  // Local state for the sections of the selected assessment
   const [sections, setSections] = useState([]);
 
-  // When an assessment is selected, update the local 'sections' state
   useEffect(() => {
     if (selectedAssessment) {
       setSections(selectedAssessment.sections);
     } else {
-      setSections([]); // Clear sections if no assessment is selected
+      setSections([]);
     }
   }, [selectedAssessment]);
 
-  // If no assessment is selected yet, but the data has loaded, default to the first one
+  // Handle cases where the selected assessment is deleted, or on initial load
   useEffect(() => {
-    if (!selectedAssessment && assessments.length > 0) {
+    const isSelectedAssessmentStillPresent = assessments.some(a => a.id === selectedAssessment?.id);
+    if (assessments.length > 0 && !isSelectedAssessmentStillPresent) {
       setSelectedAssessment(assessments[0]);
+    } else if (assessments.length === 0) {
+      setSelectedAssessment(null);
     }
   }, [assessments, selectedAssessment]);
 
   const addSection = () => {
-    setSections(prev => [...prev, { title: `Section ${prev.length + 1}`, questions: [] }]);
+    setSections(prev => [...prev, { title: `New Section ${prev.length + 1}`, questions: [] }]);
   };
 
-  // This function now uses a safer state update pattern, fixing the bug
   const addQuestion = (sectionIdx, type = "short-text") => {
     const newQuestion = {
       id: Date.now() + Math.random(),
@@ -40,11 +39,23 @@ export default function AssessmentBuilder() {
       text: "",
       options: type.includes("choice") ? ["Option 1", "Option 2"] : undefined,
     };
-    // Using a deep copy to prevent state mutation bugs
     setSections(prev => {
       const newSections = JSON.parse(JSON.stringify(prev));
       newSections[sectionIdx].questions.push(newQuestion);
       return newSections;
+    });
+  };
+  
+  const deleteSection = (sectionIndex) => {
+    if (!window.confirm("Are you sure you want to delete this section and all its questions?")) return;
+    setSections(prev => prev.filter((_, idx) => idx !== sectionIndex));
+  };
+  
+  const deleteQuestion = (sectionIndex, questionIndex) => {
+    setSections(prev => {
+        const newSections = JSON.parse(JSON.stringify(prev));
+        newSections[sectionIndex].questions.splice(questionIndex, 1);
+        return newSections;
     });
   };
 
@@ -61,7 +72,6 @@ export default function AssessmentBuilder() {
       alert("No assessment selected to save.");
       return;
     }
-    // Pass the selected assessment's ID along with the updated sections
     await saveAssessment(selectedAssessment.id, sections);
     alert(`${selectedAssessment.sections[0].title} saved!`);
   };
@@ -72,27 +82,41 @@ export default function AssessmentBuilder() {
     <div className="space-y-6 p-4">
       <h2 className="text-2xl font-bold">📝 Assessment Builder</h2>
 
-      {/* Selector for which assessment to edit */}
       <div className="p-3 border rounded bg-gray-50">
-        <label className="block font-medium mb-1">Select Assessment to Edit:</label>
-        <div className="flex gap-2 flex-wrap">
+        <label className="block font-medium mb-2">Select Assessment to Edit:</label>
+        <div className="flex flex-col gap-2">
           {assessments.map(assessment => (
-            <button
-              key={assessment.id}
-              onClick={() => setSelectedAssessment(assessment)}
-              className={`px-3 py-2 rounded font-semibold ${selectedAssessment?.id === assessment.id ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-200 hover:bg-gray-300'}`}
-            >
-              {assessment.sections[0]?.title || `Assessment ID: ${assessment.id}`}
-            </button>
+            <div key={assessment.id} className="flex items-center gap-2">
+              <button
+                onClick={() => setSelectedAssessment(assessment)}
+                className={`flex-grow text-left px-3 py-2 rounded font-semibold ${selectedAssessment?.id === assessment.id ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-200 hover:bg-gray-300'}`}
+              >
+                {assessment.sections[0]?.title || `Assessment ID: ${assessment.id}`}
+              </button>
+              {/* DELETE ASSESSMENT BUTTON */}
+              <button 
+                onClick={() => deleteAssessment(assessment.id)}
+                className="bg-red-600 text-white px-3 py-2 rounded hover:bg-red-700 font-bold"
+                title="Delete Assessment"
+              >
+                X
+              </button>
+            </div>
           ))}
         </div>
       </div>
 
-      {/* Render the builder UI only if an assessment is selected */}
       {selectedAssessment && (
         <div>
           {sections.map((sec, sIdx) => (
-            <div key={sIdx} className="p-3 border rounded mb-3">
+            <div key={sIdx} className="p-3 border rounded mb-3 relative">
+              {/* DELETE SECTION BUTTON */}
+              <button 
+                onClick={() => deleteSection(sIdx)}
+                className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded hover:bg-red-600"
+              >
+                Delete Section
+              </button>
               <input 
                 type="text" 
                 value={sec.title}
@@ -107,15 +131,24 @@ export default function AssessmentBuilder() {
                 className="text-lg font-semibold mb-2 w-full border-b pb-1 focus:outline-none focus:border-blue-500"
               />
               {sec.questions.map((q, qIdx) => (
-                <div key={q.id || qIdx} className="my-3 p-2 border-l-4 border-gray-200">
-                  <input
-                    type="text"
-                    placeholder="Enter question text..."
-                    className="w-full p-2 border rounded mb-2"
-                    value={q.text}
-                    onChange={e => updateQuestionText(sIdx, qIdx, e.target.value)}
-                  />
-                  <div className="text-xs text-gray-500 font-mono">Type: {q.type}</div>
+                <div key={q.id || qIdx} className="my-3 p-2 border-l-4 border-gray-200 flex items-start gap-2">
+                  <div className="flex-grow">
+                    <input
+                      type="text"
+                      placeholder="Enter question text..."
+                      className="w-full p-2 border rounded mb-2"
+                      value={q.text}
+                      onChange={e => updateQuestionText(sIdx, qIdx, e.target.value)}
+                    />
+                    <div className="text-xs text-gray-500 font-mono">Type: {q.type}</div>
+                  </div>
+                  {/* DELETE QUESTION BUTTON */}
+                  <button 
+                    onClick={() => deleteQuestion(sIdx, qIdx)}
+                    className="bg-gray-200 text-red-600 px-2 py-1 rounded hover:bg-red-200 text-sm mt-1"
+                  >
+                    Delete
+                  </button>
                 </div>
               ))}
 
