@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { db } from '../db';
+import { db } from '../services/db.js';
 
 export default function useAssessments(jobId) {
   const [assessments, setAssessments] = useState([]);
@@ -62,3 +62,4 @@ export default function useAssessments(jobId) {
 
   return { assessments, loading, saveAssessment, addAssessment, deleteAssessment };
 }
+
