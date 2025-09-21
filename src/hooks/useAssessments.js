@@ -1,58 +1,55 @@
-import { useState, useEffect } from "react";
-import { db } from "../services/db";
+import { useState, useEffect, useCallback } from 'react';
+import { db } from '../services/db.js';
 
 export default function useAssessments(jobId) {
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchAssessments = async () => {
+  const fetchAssessments = useCallback(async () => {
+    if (!jobId) return;
     setLoading(true);
     try {
-      const data = await db.assessments.where("jobId").equals(Number(jobId)).toArray();
-      setAssessments(data || []);
-    } catch (err)      {
-      console.error(err);
+      const allAssessments = await db.assessments
+        .where('jobId')
+        .equals(Number(jobId))
+        .toArray();
+      setAssessments(allAssessments);
+    } catch (error) {
+      console.error("Failed to fetch assessments:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [jobId]);
+
+  useEffect(() => {
+    fetchAssessments();
+  }, [fetchAssessments]);
 
   const saveAssessment = async (assessmentId, newSections) => {
     try {
       await db.assessments.update(assessmentId, { sections: newSections });
-      setAssessments(prev => prev.map(a => 
-        a.id === assessmentId ? { ...a, sections: newSections } : a
-      ));
-    } catch (err) {
-      console.error("Failed to save assessment:", err);
+      await fetchAssessments();
+    } catch (error) {
+      console.error("Failed to save assessment:", error);
     }
   };
 
-  const deleteAssessment = async (assessmentId) => {
-    // Add a confirmation dialog for safety
-    if (!window.confirm("Are you sure you want to permanently delete this entire assessment?")) {
-      return;
-    }
+  const addAssessment = async () => {
+    if (!jobId) return;
     try {
-      await db.assessments.delete(assessmentId);
-      // Update the local state to remove the assessment from the UI
-      setAssessments(prev => prev.filter(a => a.id !== assessmentId));
-    } catch (err) {
-      console.error("Failed to delete assessment:", err);
+      const newAssessment = {
+        jobId: Number(jobId),
+        sections: [{
+          title: `Assessment ${assessments.length + 1}`,
+          questions: []
+        }]
+      };
+      await db.assessments.add(newAssessment);
+      await fetchAssessments(); // Refetch to update the list in the UI
+    } catch (error) {
+      console.error("Failed to add assessment:", error);
     }
   };
 
-  const submitResponse = async (answers, candidateId = null) => {
-    try {
-      await db.responses.add({ jobId: Number(jobId), candidateId, answers, date: new
- 
-Date().toISOString() });
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  useEffect(() => { fetchAssessments(); }, [jobId]);
-
-  return { assessments, loading, fetchAssessments, saveAssessment, deleteAssessment, submitResponse };
+  return { assessments, loading, saveAssessment, addAssessment };
 }
