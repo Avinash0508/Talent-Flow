@@ -27,24 +27,19 @@ export default function App() {
         <Routes>
           
 <Route path="/" element={<Homepage />} />
-          {/* Jobs */}
+      
           <Route path="/jobs" element={<JobsList />} />
           <Route path="/jobs/:id" element={<JobDetails />} />
-
-          {/* Candidates */}
-          
+         
 <Route path="/candidates" element={<CandidatesPage />} />
 <Route path="/candidates/kanban" element={<CandidateKanban />} />
 <Route path="/candidates/:id" element={<CandidateProfile />} />
 
-
-          {/* Assessments */}
           <Route path="/assessments" element={<AssessmentsPage />} />
 <Route path="/assessments/:jobId" element={<AssessmentBuilder />} />
 <Route path="/assessments/:jobId/preview" element={<AssessmentPreview />} />
 <Route path="/assessments/:jobId/take" element={<AssessmentForm />} />
 
-          {/* Default route */}
           <Route path="/" element={<JobsList />} />
         </Routes>
       </main>
