@@ -4,7 +4,7 @@ import useAssessments from "../../hooks/useAssessments";
 
 export default function AssessmentBuilder() {
   const { jobId } = useParams();
-  const { assessments, loading, saveAssessment, addAssessment } = useAssessments(jobId);
+  const { assessments, loading, saveAssessment, addAssessment, deleteAssessment } = useAssessments(jobId);
   
   const [selectedAssessment, setSelectedAssessment] = useState(null);
   const [sections, setSections] = useState([]);
@@ -25,6 +25,13 @@ export default function AssessmentBuilder() {
       setSelectedAssessment(assessments.length > 0 ? assessments[0] : null);
     }
   }, [assessments, selectedAssessment]);
+
+  const handleDeleteAssessment = async (assessmentId, assessmentTitle) => {
+    const isConfirmed = window.confirm(`Are you sure you want to delete "${assessmentTitle}"? This action cannot be undone.`);
+    if (isConfirmed) {
+      await deleteAssessment(assessmentId);
+    }
+  };
 
   const updateState = (updateFunction) => {
     setSections(prev => {
@@ -92,15 +99,26 @@ export default function AssessmentBuilder() {
       <div className="p-3 border rounded bg-gray-50">
         <label className="block font-medium mb-1">Select Assessment to Edit:</label>
         <div className="flex gap-2 flex-wrap">
-          {assessments.map(assessment => (
-            <button
-              key={assessment.id}
-              onClick={() => setSelectedAssessment(assessment)}
-              className={`px-3 py-2 rounded font-semibold ${selectedAssessment?.id === assessment.id ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-200 hover:bg-gray-300'}`}
-            >
-              {assessment.sections[0]?.title || `Assessment ID: ${assessment.id}`}
-            </button>
-          ))}
+          {assessments.map(assessment => {
+            const title = assessment.sections[0]?.title || `Assessment ID: ${assessment.id}`;
+            return (
+              <div key={assessment.id} className="relative group flex items-center">
+                <button
+                  onClick={() => setSelectedAssessment(assessment)}
+                  className={`pl-3 pr-8 py-2 rounded font-semibold transition-colors ${selectedAssessment?.id === assessment.id ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-200 hover:bg-gray-300'}`}
+                >
+                  {title}
+                </button>
+                <button
+                  onClick={() => handleDeleteAssessment(assessment.id, title)}
+                  className="absolute top-0 right-0 h-full w-7 flex items-center justify-center text-gray-500 hover:text-red-600 bg-gray-200/50 hover:bg-gray-300/80 rounded-r opacity-0 group-hover:opacity-100 transition-opacity text-xl font-bold"
+                  title={`Delete ${title}`}
+                >
+                  &times;
+                </button>
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -182,6 +200,7 @@ export default function AssessmentBuilder() {
 
           <div className="flex gap-4 mt-6">
             <button onClick={handleSave} className="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold shadow hover:bg-green-700">Save Changes</button>
+
           </div>
         </div>
       )}
