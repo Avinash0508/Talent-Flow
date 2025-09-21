@@ -5,7 +5,6 @@ import useCandidates from "../../hooks/useCandidates";
 import useJobs from "../../hooks/useJobs";
 
 function renderWithMentions(text) {
-  // simple highlight for @mentions
   return text.split(/(\s+)/).map((part, i) => {
     if (part.startsWith("@")) {
       return <span key={i} className="text-indigo-600 font-medium">{part}</span>;
@@ -72,3 +71,4 @@ export default function CandidateProfile() {
     </div>
   );
 }
+
