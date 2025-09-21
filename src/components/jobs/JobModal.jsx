@@ -21,7 +21,7 @@ export default function JobModal({ isOpen, onClose, onSave, initialData }) {
     }
   }, [initialData]);
 
-  // Close on ESC
+  
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === "Escape") onClose();
@@ -30,7 +30,7 @@ export default function JobModal({ isOpen, onClose, onSave, initialData }) {
     return () => window.removeEventListener("keydown", handleEsc);
   }, [onClose]);
 
-  // Close on outside click
+  
   const handleOverlayClick = (e) => {
     if (modalRef.current && !modalRef.current.contains(e.target)) {
       onClose();
@@ -66,16 +66,16 @@ export default function JobModal({ isOpen, onClose, onSave, initialData }) {
         className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 relative cursor-move"
         draggable
         onDragStart={(e) => {
-          e.dataTransfer.setDragImage(new Image(), 0, 0); // hide ghost image
+          e.dataTransfer.setDragImage(new Image(), 0, 0); 
         }}
         onDrag={(e) => {
-          if (e.clientX === 0 && e.clientY === 0) return; // ignore fake dragend
+          if (e.clientX === 0 && e.clientY === 0) return; 
           e.currentTarget.style.position = "absolute";
           e.currentTarget.style.left = `${e.clientX - e.currentTarget.offsetWidth / 2}px`;
           e.currentTarget.style.top = `${e.clientY - 20}px`;
         }}
       >
-        {/* Close Button */}
+       
         <button
           onClick={onClose}
           className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-lg font-bold"
@@ -151,3 +151,4 @@ export default function JobModal({ isOpen, onClose, onSave, initialData }) {
     </div>
   );
 }
+
