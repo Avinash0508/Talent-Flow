@@ -5,9 +5,7 @@ import "./index.css";
 import { worker } from "./mocks/browser";
 import { seedData } from "./services/db.js";
 
-// Seed IndexedDB first
 seedData().then(() => {
-  // Start MSW after seeding
   worker.start({ onUnhandledRequest: "bypass" }).then(() => {
     ReactDOM.createRoot(document.getElementById("root")).render(
       <React.StrictMode>
