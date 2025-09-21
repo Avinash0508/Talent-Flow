@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { db } from "../../src/services/db.js";
 
-
+// Default skills and roles for jobs
 const jobDefaults = Array.from({ length: 25 }).map((_, i) => ({
   preferredSkills: ["React", "Node.js", "CSS", "SQL", "Docker"][i % 5],
   experience: `${1 + (i % 5)}+ years`,
@@ -25,19 +25,19 @@ export default function useJobs() {
     return () => { isMounted = false; };
   }, []);
 
-  
   const addJob = useCallback(async (job) => {
     const maxOrder = (await db.jobs.orderBy("order").last())?.order ?? -1;
-    const index = jobs.length % jobDefaults.length; // cycle defaults
+    const index = jobs.length % jobDefaults.length;
     const newJob = {
       id: Date.now(),
       title: job.title || `Job ${jobs.length + 1}`,
       slug: (job.slug || `job-${jobs.length + 1}`),
       status: "active",
       order: maxOrder + 1,
-      preferredSkills: jobDefaults[index].preferredSkills,
-      experience: jobDefaults[index].experience,
-      roles: jobDefaults[index].roles
+      // FIX: Use nullish coalescing (??) to correctly save empty strings from the form
+      preferredSkills: job.preferredSkills ?? jobDefaults[index].preferredSkills,
+      experience: job.experience ?? jobDefaults[index].experience,
+      roles: job.roles ?? jobDefaults[index].roles
     };
 
     await db.jobs.add(newJob);
@@ -60,9 +60,8 @@ export default function useJobs() {
   }, []);
 
   const reorderJobs = useCallback(async (updatedJobs) => {
-    setJobs(updatedJobs); 
+    setJobs(updatedJobs);
     await Promise.all(updatedJobs.map((job, index) => db.jobs.update(job.id, { order: index })));
-
   }, []);
 
   const deleteJob = useCallback(async (id) => {
@@ -72,4 +71,3 @@ export default function useJobs() {
 
   return { jobs, loading, addJob, editJob, archiveJob, restoreJob, reorderJobs, deleteJob };
 }
-
