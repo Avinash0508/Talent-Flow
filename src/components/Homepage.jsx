@@ -12,7 +12,7 @@ export default function Homepage() {
 
   return (
     <div className="space-y-12">
-      {/* Hero Section */}
+      
       <section className="bg-blue-100 p-12 rounded-xl shadow-md text-center">
         <h1 className="text-4xl font-bold text-blue-900 mb-4 flex items-center justify-center gap-3">
         
@@ -26,7 +26,7 @@ export default function Homepage() {
         </p>
       </section>
 
-      {/* Quick Links Cards */}
+      
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {cards.map((card) => (
           <div
@@ -45,4 +45,5 @@ export default function Homepage() {
       </section>
     </div>
   );
+
 }
