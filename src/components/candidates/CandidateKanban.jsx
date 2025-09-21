@@ -11,14 +11,14 @@ export default function CandidateKanban() {
   const [stageFilter, setStageFilter] = useState("all");
   const [jobStatusFilter, setJobStatusFilter] = useState("all");
 
-  // Filtered candidates based on search, stage, and job status
+  // To fetch the Filtered candidates
   const filteredCandidates = useMemo(() => {
     const q = query.trim().toLowerCase();
     return candidates.filter(c => {
-      // Stage filter
+      
       if (stageFilter !== "all" && c.stage !== stageFilter) return false;
 
-      // Job status filter
+      
       if (jobStatusFilter !== "all") {
         const job = jobs.find(j => String(j.id) === String(c.jobId));
         if (!job) return false;
@@ -26,13 +26,12 @@ export default function CandidateKanban() {
         if (jobStatusFilter === "archived" && !job.archived) return false;
       }
 
-      // Search filter
+      
       if (!q) return true;
       return (c.name || "").toLowerCase().includes(q) || (c.email || "").toLowerCase().includes(q);
     });
   }, [candidates, query, stageFilter, jobStatusFilter, jobs]);
 
-  // Organize candidates by stage
   const columns = useMemo(() => {
     return STAGES.reduce((acc, stage) => {
       acc[stage] = filteredCandidates.filter(c => c.stage === stage);
@@ -50,7 +49,6 @@ export default function CandidateKanban() {
 
   return (
     <div className="p-4">
-      {/* Filters */}
       <div className="flex gap-2 mb-4 items-center">
         <input
           type="text"
@@ -121,3 +119,4 @@ export default function CandidateKanban() {
     </div>
   );
 }
+
