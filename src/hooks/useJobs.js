@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { db } from "../../src/services/db.js";
 
-// Default skills and roles for jobs
 const jobDefaults = Array.from({ length: 25 }).map((_, i) => ({
   preferredSkills: ["React", "Node.js", "CSS", "SQL", "Docker"][i % 5],
   experience: `${1 + (i % 5)}+ years`,
@@ -34,7 +33,7 @@ export default function useJobs() {
       slug: (job.slug || `job-${jobs.length + 1}`),
       status: "active",
       order: maxOrder + 1,
-      // FIX: Use nullish coalescing (??) to correctly save empty strings from the form
+      
       preferredSkills: job.preferredSkills ?? jobDefaults[index].preferredSkills,
       experience: job.experience ?? jobDefaults[index].experience,
       roles: job.roles ?? jobDefaults[index].roles
@@ -71,3 +70,4 @@ export default function useJobs() {
 
   return { jobs, loading, addJob, editJob, archiveJob, restoreJob, reorderJobs, deleteJob };
 }
+
