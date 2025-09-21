@@ -9,9 +9,7 @@ db.version(1).stores({
   responses: "++id, jobId, candidateId, date"
 });
 
-// Expanded question bank with 30 unique questions per role family and per specific job title
 const jobSpecificQuestions = {
-  // --- START: NEW JOB TITLE SPECIFIC QUESTIONS ---
   "React Developer": {
     "Assessment 1": ["What is JSX and how does it differ from HTML?", "Explain React's reconciliation process.", "Describe the difference between a class component and a functional component.", "What are React Hooks?", "How do you pass data between components?", "What is the significance of the `key` prop in lists?", "What is the Context API?", "How would you optimize performance in a React application?", "What is `prop drilling` and how can you avoid it?", "Describe error boundaries in React."]
   },
@@ -30,9 +28,7 @@ const jobSpecificQuestions = {
   "Site Reliability Engineer (SRE)": {
       "Assessment 1": ["What is the difference between SRE and DevOps?", "Define SLO, SLI, and SLA.", "What is a postmortem and what are its key components?", "Explain the concept of 'toil' in SRE.", "How do you measure and improve system reliability?", "What is Chaos Engineering?", "Describe a monitoring stack you have used (e.g., Prometheus, Grafana).", "What is the purpose of a service mesh like Istio or Linkerd?", "How do you manage secrets in a distributed system?", "Explain the concept of 'error budgets'."]
   },
-  // --- END: NEW JOB TITLE SPECIFIC QUESTIONS ---
 
-  // Category-level questions as fallbacks
   "Frontend-Developer": {
     "Assessment 1": [
       "What is the difference between `let`, `const`, and `var`?", "Explain the concept of the virtual DOM in React.", "Describe the box model in CSS.", "What are Promises and how do they work?", "How would you handle state management in a large React application?", "What is the purpose of the `useEffect` hook?", "Provide an example of a responsive navigation bar using Flexbox.", "What are semantic HTML tags and why are they important?", "Explain the concept of closures in JavaScript.", "Describe the difference between `==` and `===`."
@@ -60,9 +56,8 @@ const jobSpecificQuestions = {
   }
 };
 
-// Job-category-specific base questions to ensure variety and relevance.
 const jobCategoryBaseQuestions = {
-  // --- START: NEW JOB TITLE SPECIFIC QUESTIONS ---
+
   "React Developer": [
     { type: "short-text", text: "Which React state management library do you prefer (e.g., Redux, Zustand)?" },
     { type: "long-text", text: "Describe a custom Hook you have built and the problem it solved." },
@@ -87,9 +82,7 @@ const jobCategoryBaseQuestions = {
     { type: "multi-choice", text: "Which of these ORMs or query builders have you used with Node.js?", options: ["Prisma", "Sequelize", "TypeORM", "Knex.js"] },
     { type: "file", text: "Please upload a code snippet showing how you handle asynchronous error handling." }
   ],
-  // --- END: NEW JOB TITLE SPECIFIC QUESTIONS ---
-
-  // Category-level questions as fallbacks
+  
   "Frontend-Developer": [
     { type: "short-text", text: "Which CSS framework are you most comfortable with (e.g., Tailwind, Bootstrap)?" },
     { type: "long-text", text: "Describe your process for ensuring a web application is accessible (a11y)." },
@@ -150,36 +143,35 @@ const jobCategoryBaseQuestions = {
 
 
 const jobProfiles = [
-  // ... (job profiles remain unchanged)
-  // Frontend Family
+
   { title: "Frontend Developer", category: "Frontend-Developer", preferredSkills: "HTML, CSS, JavaScript, React", experience: "2+ years", roles: "Build and maintain user interfaces for web applications." },
   { title: "React Developer", category: "Frontend-Developer", preferredSkills: "React, Redux, Next.js, TypeScript", experience: "3+ years", roles: "Specialize in building complex, stateful applications with React." },
   { title: "Vue.js Engineer", category: "Frontend-Developer", preferredSkills: "Vue.js, Vuex, Nuxt.js, JavaScript", experience: "2+ years", roles: "Develop interactive front-end features using the Vue.js framework." },
   { title: "UI Engineer", category: "Frontend-Developer", preferredSkills: "UI/UX Principles, CSS-in-JS, Storybook, Figma", experience: "3+ years", roles: "Bridge the gap between design and development, focusing on UI components." },
-  // Backend Family
+ 
   { title: "Backend Developer", category: "Backend-Developer", preferredSkills: "Node.js, Express, Python, SQL", experience: "2+ years", roles: "Develop server-side logic, APIs, and database integrations." },
   { title: "Node.js Developer", category: "Backend-Developer", preferredSkills: "Node.js, Express, Koa, MongoDB", experience: "3+ years", roles: "Build scalable network applications using the Node.js runtime." },
   { title: "Python/Django Developer", category: "Backend-Developer", preferredSkills: "Python, Django, Flask, PostgreSQL", experience: "3+ years", roles: "Create robust web applications and APIs using Python and Django." },
   { title: "API Engineer", category: "Backend-Developer", preferredSkills: "REST, GraphQL, API Gateways, OpenAPI", experience: "4+ years", roles: "Design, build, and maintain high-performance APIs." },
-  // FullStack Family
+ 
   { title: "Full-Stack Developer", category: "FullStack-Developer", preferredSkills: "React, Node.js, SQL, AWS", experience: "3+ years", roles: "Work on both the client and server sides of an application." },
   { title: "MERN Stack Developer", category: "FullStack-Developer", preferredSkills: "MongoDB, Express, React, Node.js", experience: "2+ years", roles: "Specialize in the MERN (MongoDB, Express, React, Node) stack." },
-  // UI/UX Family
+  
   { title: "UI/UX Designer", category: "UI-UX-Designer", preferredSkills: "Figma, Adobe XD, User Research", experience: "2+ years", roles: "Design user-friendly interfaces and improve overall user experience." },
   { title: "Product Designer", category: "UI-UX-Designer", preferredSkills: "Prototyping, User Testing, Design Systems", experience: "4+ years", roles: "Oversee the entire design process of a product from concept to launch." },
   { title: "UX Researcher", category: "UI-UX-Designer", preferredSkills: "Surveys, Interviews, Usability Testing", experience: "3+ years", roles: "Conduct research to understand user behaviors, needs, and motivations." },
-  // DevOps Family
+
   { title: "DevOps Engineer", category: "DevOps-Engineer", preferredSkills: "AWS, Docker, Kubernetes, CI/CD", experience: "3+ years", roles: "Automate and streamline the software development and release process." },
   { title: "Cloud Architect (AWS)", category: "DevOps-Engineer", preferredSkills: "AWS, Terraform, IaC, System Design", experience: "5+ years", roles: "Design and implement scalable, secure, and robust cloud infrastructure." },
   { title: "Site Reliability Engineer (SRE)", category: "DevOps-Engineer", preferredSkills: "Monitoring, Prometheus, Go, Kubernetes", experience: "4+ years", roles: "Focus on application reliability, latency, and performance." },
   { title: "CI/CD Specialist", category: "DevOps-Engineer", preferredSkills: "Jenkins, GitHub Actions, GitLab CI", experience: "3+ years", roles: "Build and maintain continuous integration and deployment pipelines." },
-  // Data Family
+
   { title: "Data Analyst", category: "Data-Analyst", preferredSkills: "SQL, Excel, Tableau, Python", experience: "2+ years", roles: "Analyze data to identify trends and provide actionable insights." },
   { title: "Data Scientist", category: "Data-Analyst", preferredSkills: "Python, R, Machine Learning, Statistics", experience: "4+ years", roles: "Build predictive models and perform complex statistical analysis." },
   { title: "Business Intelligence (BI) Analyst", category: "Data-Analyst", preferredSkills: "Power BI, SQL, Data Warehousing", experience: "3+ years", roles: "Create dashboards and reports to help businesses make better decisions." },
   { title: "SQL Developer", category: "Data-Analyst", preferredSkills: "Advanced SQL, Stored Procedures, ETL", experience: "3+ years", roles: "Design, manage, and query complex relational databases." },
   { title: "Machine Learning Engineer", category: "Data-Analyst", preferredSkills: "TensorFlow, PyTorch, Scikit-learn", experience: "4+ years", roles: "Deploy and maintain machine learning models in production." },
-  // Product Family
+  
   { title: "Product Manager", category: "Product-Manager", preferredSkills: "Agile, Jira, Roadmapping", experience: "3+ years", roles: "Define product strategy and guide products from conception to launch." },
   { title: "Technical Product Manager", category: "Product-Manager", preferredSkills: "APIs, System Architecture, Agile", experience: "5+ years", roles: "Work. closely with engineering teams on highly technical products." },
   { title: "Agile Coach / Scrum Master", category: "Product-Manager", preferredSkills: "Scrum, Kanban, Coaching", experience: "4+ years", roles: "Facilitate agile processes and coach teams to improve their practices." }
@@ -188,7 +180,6 @@ const jobProfiles = [
 const firstNames = ["Aisha", "Bao", "Chen", "Darnell", "Elena", "Fatima", "Gabriel", "Hiroshi", "Isabella", "Javier", "Katerina", "Liam", "Mei", "Nkechi", "Omar", "Priya", "Quentin", "Rafa", "Sofia", "Tariq", "Uma", "Viktor", "Wei", "Ximena", "Yara", "Zane", "Ananya", "Ben", "Chloe", "David", "Emily", "Finn", "Grace", "Henry", "Ivy", "Jack", "Kate", "Leo", "Mia", "Noah", "Olivia", "Penelope", "Ryan", "Sophia", "Thomas", "William", "Zoe", "Ali", "Fatima", "Maria"];
 const lastNames = ["Khan", "Chen", "Smith", "Rodriguez", "García", "Kim", "Nguyen", "Lee", "Patel", "Singh", "Williams", "Jones", "Brown", "Davis", "Miller", "Wilson", "Moore", "Taylor", "Anderson", "Thomas", "Jackson", "White", "Harris", "Martin", "Thompson", "Martinez", "Robinson", "Clark", "Lewis", "Walker", "Hall", "Allen", "Young", "Hernandez", "King", "Wright", "Lopez", "Hill", "Scott", "Green", "Adams", "Baker", "Gonzalez", "Nelson", "Carter", "Mitchell", "Perez", "Roberts", "Turner", "Phillips"];
 
-// Helper function to shuffle an array
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -202,7 +193,6 @@ export async function seedData() {
     const jobCount = await db.jobs.count();
     if (jobCount > 0) return;
 
-    // 1. Seed Jobs
     const jobs = jobProfiles.map((job, i) => ({
       id: i + 1,
       title: job.title,
@@ -216,7 +206,6 @@ export async function seedData() {
     }));
     await db.jobs.bulkAdd(jobs);
    
-    // 2. Seed Candidates
     const stages = ["applied", "screen", "tech", "offer", "hired", "rejected"];
     const candidates = Array.from({ length: 1000 }).map((_, i) => {
       const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
@@ -234,22 +223,18 @@ export async function seedData() {
     });
     await db.candidates.bulkAdd(candidates);
 
-    // 3. Seed Assessments with job-title-specific, varied question types
     const assessments = [];
     
     jobs.forEach(job => {
-      // Create 3 separate assessments for the job.
+      
       for (let a = 1; a <= 3; a++) {
-        // FIX: All question generation logic is now INSIDE this loop to ensure uniqueness.
-        
-        // Find the appropriate question text banks, falling back from title to category.
+      
         const titleBank = jobSpecificQuestions[job.title];
         const categoryBank = jobSpecificQuestions[job.category];
         
         let specificQuestionTexts = [];
         const assessmentKey = `Assessment ${a}`;
 
-        // Try to get texts for Assessment 1, 2, or 3. If not found, fall back to Assessment 1.
         if (titleBank && titleBank[assessmentKey]) {
             specificQuestionTexts = titleBank[assessmentKey];
         } else if (categoryBank && categoryBank[assessmentKey]) {
@@ -260,7 +245,6 @@ export async function seedData() {
             specificQuestionTexts = categoryBank['Assessment 1'];
         }
 
-        // Get the base questions, falling back from title to category to a default set.
         const baseQuestionsTemplate = jobCategoryBaseQuestions[job.title] || jobCategoryBaseQuestions[job.category] || jobCategoryBaseQuestions.Default;
         const baseQuestionsForJob = JSON.parse(JSON.stringify(baseQuestionsTemplate));
         
@@ -273,7 +257,6 @@ export async function seedData() {
         let finalQuestions = [...baseQuestionsForJob, ...additionalQuestions];
         finalQuestions = shuffle(finalQuestions);
 
-        // Assign unique IDs to every question for THIS assessment instance.
         finalQuestions.forEach(q => {
             q.id = Date.now() + Math.random();
         });
@@ -287,10 +270,11 @@ export async function seedData() {
     });
 
     await db.assessments.bulkAdd(assessments);
-    console.log("✅ All data seeded: 25 jobs, 1000 candidates, 75 assessments with job-title-specific questions.");
+    console.log("All data seeded: 25 jobs, 1000 candidates, 75 assessments with job-title-specific questions.");
 
   } catch (err)
  {
     console.error("Seeding error:", err);
   }
 }
+
