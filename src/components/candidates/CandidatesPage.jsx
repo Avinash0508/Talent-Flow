@@ -15,14 +15,13 @@ export default function CandidatesPage() {
   const [noteInputs, setNoteInputs] = useState({});
   const navigate = useNavigate();
 
-  // 1. Read the 'jobId' from the URL query parameters
   const [searchParams] = useSearchParams();
   const jobIdFilter = searchParams.get("jobId");
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return candidates.filter(c => {
-      // 2. Apply the new job filter if it exists
+      
       if (jobIdFilter && String(c.jobId) !== String(jobIdFilter)) return false;
 
       if (stageFilter !== "all" && c.stage !== stageFilter) return false;
@@ -37,7 +36,7 @@ export default function CandidatesPage() {
       if (!q) return true;
       return (c.name || "").toLowerCase().includes(q) || (c.email || "").toLowerCase().includes(q);
     });
-  }, [candidates, query, stageFilter, jobStatusFilter, jobs, jobIdFilter]); // 3. Add jobIdFilter to dependencies
+  }, [candidates, query, stageFilter, jobStatusFilter, jobs, jobIdFilter]); 
 
   const handleNoteChange = (id, text) => setNoteInputs(prev => ({ ...prev, [id]: text }));
   const handleAddNote = (id) => {
@@ -50,7 +49,6 @@ export default function CandidatesPage() {
     addNote(candidateId, null, noteId);
   };
   
-  // Find the job title to display in the filter notification
   const filteredJob = useMemo(() => {
     if (!jobIdFilter) return null;
     return jobs.find(j => String(j.id) === String(jobIdFilter));
@@ -58,7 +56,7 @@ export default function CandidatesPage() {
 
   return (
     <div className="p-4">
-      {/* 4. Display a notification and a "Clear" button when filtering by job */}
+     
       {filteredJob && (
         <div className="bg-indigo-100 border-l-4 border-indigo-500 text-indigo-700 p-4 mb-4 rounded-md flex justify-between items-center shadow">
           <div>
@@ -74,7 +72,7 @@ export default function CandidatesPage() {
         </div>
       )}
 
-      {/* Filters & Add Candidate */}
+      
       <div className="flex gap-3 items-center mb-4">
         <input
           className="border rounded px-3 py-2 flex-1"
@@ -107,7 +105,7 @@ export default function CandidatesPage() {
         </button>
       </div>
 
-      {/* Candidate List */}
+      
       <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
         {filtered.map(c => {
           const job = jobs.find(j => j.id === c.jobId);
@@ -126,7 +124,7 @@ export default function CandidatesPage() {
                 </div>
               </div>
 
-              {/* Stage Selector */}
+              
               <div className="flex gap-2 items-center">
                 <label className="text-sm font-medium text-gray-700">Move Stage:</label>
                 <select
@@ -138,7 +136,7 @@ export default function CandidatesPage() {
                 </select>
               </div>
 
-              {/* Notes */}
+              
               <div className="flex flex-col gap-1">
                 <label className="text-sm font-medium text-gray-700">Notes:</label>
                 <ul className="pl-4 list-disc text-gray-700">
@@ -175,7 +173,7 @@ export default function CandidatesPage() {
         })}
       </div>
 
-      {/* Modal */}
+      
       <CandidateModal
         isOpen={isModalOpen}
         onClose={() => { setIsModalOpen(false); setEditing(null); }}
@@ -189,4 +187,5 @@ export default function CandidatesPage() {
       />
     </div>
   );
+
 }
