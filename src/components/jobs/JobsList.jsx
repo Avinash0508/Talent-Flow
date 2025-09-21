@@ -11,7 +11,7 @@ export default function JobsList() {
   const [candidates, setCandidates] = useState([]);
   const navigate = useNavigate();
 
-  // Load candidates from localStorage
+  
   useEffect(() => {
     const storedCandidates = JSON.parse(localStorage.getItem("candidates")) || [];
     setCandidates(storedCandidates);
@@ -22,7 +22,6 @@ export default function JobsList() {
   const activeJobs = jobs.filter(job => job.status === "active").sort((a, b) => a.order - b.order);
   const archivedJobs = jobs.filter(job => job.status === "archived").sort((a, b) => a.order - b.order);
 
-  // Handle saving a job (add or edit)
   const handleSave = (jobData) => {
     if (editingJob) {
       editJob(jobData.id, jobData);
@@ -33,7 +32,7 @@ export default function JobsList() {
     setEditingJob(null);
   };
 
-  // Handle drag-and-drop reorder
+
   const handleDragEnd = (result) => {
     if (!result.destination) return;
 
@@ -41,13 +40,13 @@ export default function JobsList() {
     const [movedJob] = newActiveJobs.splice(result.source.index, 1);
     newActiveJobs.splice(result.destination.index, 0, movedJob);
 
-    // Update order for active jobs and merge with archived
+    
     const updatedJobs = [
       ...newActiveJobs.map((job, index) => ({ ...job, order: index })),
       ...archivedJobs
     ];
 
-    reorderJobs(updatedJobs); // Updates state and DB, triggers rerender
+    reorderJobs(updatedJobs); 
   };
 
   return (
@@ -61,7 +60,7 @@ export default function JobsList() {
         + Add Job
       </button>
 
-      {/* Active Jobs */}
+      
       <h3 className="text-xl font-semibold text-green-700">Active Jobs</h3>
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="active-jobs">
@@ -125,7 +124,7 @@ export default function JobsList() {
         </Droppable>
       </DragDropContext>
 
-      {/* Archived Jobs */}
+    
       {archivedJobs.length > 0 && (
         <>
           <h3 className="text-xl font-semibold text-red-700">Archived Jobs</h3>
@@ -150,7 +149,7 @@ export default function JobsList() {
         </>
       )}
 
-      {/* Job Modal */}
+     
       <JobModal
         isOpen={modalOpen}
         onClose={() => { setModalOpen(false); setEditingJob(null); }}
@@ -160,3 +159,4 @@ export default function JobsList() {
     </div>
   );
 }
+
