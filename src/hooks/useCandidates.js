@@ -6,7 +6,6 @@ export const STAGES = ["applied", "screen", "tech", "offer", "hired", "rejected"
 export default function useCandidates() {
   const [candidates, setCandidates] = useState([]);
 
-  // Load candidates from IndexedDB on mount
   useEffect(() => {
     async function fetchCandidates() {
       const all = await db.candidates.toArray();
@@ -15,7 +14,6 @@ export default function useCandidates() {
     fetchCandidates();
   }, []);
 
-  // Add or delete a note
   const addNote = async (candidateId, text, noteId = null) => {
     setCandidates(prev =>
       prev.map(c => {
@@ -32,7 +30,6 @@ export default function useCandidates() {
           updatedCandidate = { ...c, notes: [...(c.notes || []), newNote] };
         }
 
-        // Persist in IndexedDB
         db.candidates.put(updatedCandidate);
 
         return updatedCandidate;
@@ -86,3 +83,4 @@ export default function useCandidates() {
     addNote
   };
 }
+
