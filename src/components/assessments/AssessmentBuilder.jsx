@@ -4,7 +4,7 @@ import useAssessments from "../../hooks/useAssessments";
 
 export default function AssessmentBuilder() {
   const { jobId } = useParams();
-  const { assessments, loading, saveAssessment } = useAssessments(jobId);
+  const { assessments, loading, saveAssessment, addAssessment } = useAssessments(jobId);
   
   const [selectedAssessment, setSelectedAssessment] = useState(null);
   const [sections, setSections] = useState([]);
@@ -21,6 +21,9 @@ export default function AssessmentBuilder() {
     if (!selectedAssessment && assessments.length > 0) {
       setSelectedAssessment(assessments[0]);
     }
+    if (selectedAssessment && !assessments.find(a => a.id === selectedAssessment.id)) {
+      setSelectedAssessment(assessments.length > 0 ? assessments[0] : null);
+    }
   }, [assessments, selectedAssessment]);
 
   const updateState = (updateFunction) => {
@@ -29,10 +32,6 @@ export default function AssessmentBuilder() {
       updateFunction(newSections);
       return newSections;
     });
-  };
-
-  const addSection = () => {
-    setSections(prev => [...prev, { title: `Section ${prev.length + 1}`, questions: [] }]);
   };
 
   const addQuestion = (sectionIdx, type = "short-text") => {
@@ -45,7 +44,6 @@ export default function AssessmentBuilder() {
     updateState(newSections => newSections[sectionIdx].questions.push(newQuestion));
   };
   
-  // New function to remove a question
   const removeQuestion = (sectionIdx, qIdx) => {
     updateState(newSections => {
       newSections[sectionIdx].questions.splice(qIdx, 1);
@@ -82,7 +80,7 @@ export default function AssessmentBuilder() {
       return;
     }
     await saveAssessment(selectedAssessment.id, sections);
-    alert(`${selectedAssessment.sections[0].title} saved!`);
+    alert(`'${sections[0]?.title || 'Assessment'}' saved!`);
   };
 
   if (loading) return <p>Loading assessment builder...</p>;
@@ -121,7 +119,6 @@ export default function AssessmentBuilder() {
               />
               {sec.questions.map((q, qIdx) => (
                 <div key={q.id || qIdx} className="relative my-4 p-3 pt-4 border-l-4 border-gray-200 bg-gray-50 rounded-r-lg">
-                  {/* === Remove Question Button === */}
                   <button
                     onClick={() => removeQuestion(sIdx, qIdx)}
                     className="absolute top-1 right-1 px-2 py-0 leading-tight text-xl text-red-500 hover:bg-red-100 rounded-full font-bold"
@@ -129,7 +126,6 @@ export default function AssessmentBuilder() {
                   >
                     &times;
                   </button>
-                  {/* ============================== */}
                   
                   <input
                     type="text"
@@ -185,11 +181,19 @@ export default function AssessmentBuilder() {
           ))}
 
           <div className="flex gap-4 mt-6">
-            <button onClick={addSection} className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 rounded-lg font-semibold shadow">Add Section</button>
             <button onClick={handleSave} className="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold shadow hover:bg-green-700">Save Changes</button>
           </div>
         </div>
       )}
+
+      <div className="mt-8 border-t pt-6">
+        <button 
+          onClick={addAssessment} 
+          className="px-5 py-2 bg-yellow-400 hover:bg-yellow-500 rounded-lg font-semibold shadow-md"
+        >
+          + Add New Assessment
+        </button>
+      </div>
     </div>
   );
 }
