@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { db } from '../services/db.js';
+import { db } from '../db';
 
 export default function useAssessments(jobId) {
   const [assessments, setAssessments] = useState([]);
@@ -45,11 +45,20 @@ export default function useAssessments(jobId) {
         }]
       };
       await db.assessments.add(newAssessment);
-      await fetchAssessments(); // Refetch to update the list in the UI
+      await fetchAssessments();
     } catch (error) {
       console.error("Failed to add assessment:", error);
     }
   };
 
-  return { assessments, loading, saveAssessment, addAssessment };
+  const deleteAssessment = async (assessmentId) => {
+    try {
+      await db.assessments.delete(assessmentId);
+      await fetchAssessments(); // Refetch to update the list
+    } catch (error) {
+      console.error("Failed to delete assessment:", error);
+    }
+  };
+
+  return { assessments, loading, saveAssessment, addAssessment, deleteAssessment };
 }
