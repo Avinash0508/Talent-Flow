@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { useParams } from "react-router-dom";
 import useAssessments from "../../hooks/useAssessments";
 
-// Helper component to render the correct input based on question type
 const QuestionInput = ({ question, answer, onAnswerChange }) => {
   const handleMultiChoiceChange = (option, isChecked) => {
     const currentAnswers = answer || {};
@@ -13,7 +12,7 @@ const QuestionInput = ({ question, answer, onAnswerChange }) => {
 
   const handleNumericChange = (e) => {
     const value = e.target.value;
-    // Allow the field to be empty or only contain integers from 1 to 10.
+   
     if (value === "" || (/^\d+$/.test(value) && parseInt(value) >= 1 && parseInt(value) <= 10)) {
       onAnswerChange(question.id, value);
     }
@@ -80,7 +79,7 @@ const QuestionInput = ({ question, answer, onAnswerChange }) => {
         <div className="space-y-2 mt-2">
           {question.options?.map((option) => (
             <label 
-              key={`${question.id}-${option}`} // FIX: More specific key for React
+              key={`${question.id}-${option}`} 
               className="flex items-center space-x-3 p-2 rounded hover:bg-indigo-50 cursor-pointer"
             >
               <input
@@ -178,3 +177,4 @@ export default function AssessmentPreview() {
     </motion.div>
   );
 }
+
