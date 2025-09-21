@@ -6,7 +6,7 @@ export default function CandidateModal({ isOpen, onClose, onSave, candidate, job
   const [jobId, setJobId] = useState("");
   const [stage, setStage] = useState("Applied");
 
-  // Pre-fill fields when editing
+ 
   useEffect(() => {
     if (candidate) {
       setName(candidate.name || "");
@@ -57,7 +57,7 @@ export default function CandidateModal({ isOpen, onClose, onSave, candidate, job
             required
           />
 
-          {/* Job selection: only active jobs */}
+          
           <select
             value={jobId}
             onChange={e => setJobId(e.target.value)}
@@ -69,7 +69,7 @@ export default function CandidateModal({ isOpen, onClose, onSave, candidate, job
             ))}
           </select>
 
-          {/* Stage selection */}
+          
           <select
             value={stage}
             onChange={e => setStage(e.target.value)}
@@ -100,3 +100,4 @@ export default function CandidateModal({ isOpen, onClose, onSave, candidate, job
     </div>
   );
 }
+
