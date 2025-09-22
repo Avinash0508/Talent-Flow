@@ -5,7 +5,7 @@ const simulateDelay = () => new Promise(res => setTimeout(res, 200 + Math.random
 const simulateError = (chance=0.1) => Math.random() < chance;
 
 export const handlers = [
-  // Jobs
+  
   rest.get("/jobs", async (req, res, ctx) => {
     await simulateDelay();
     const jobs = await db.jobs.toArray();
@@ -31,11 +31,10 @@ export const handlers = [
   rest.patch("/jobs/:id/reorder", async (req, res, ctx) => {
     await simulateDelay();
     if(simulateError(0.1)) return res(ctx.status(500));
-    // Implement reorder logic as needed
     return res(ctx.json({ success: true }));
   }),
 
-  // Candidates
+  
   rest.get("/candidates", async (req,res,ctx) => {
     await simulateDelay();
     const candidates = await db.candidates.toArray();
@@ -65,7 +64,6 @@ export const handlers = [
     return res(ctx.json(candidate?.timeline || []));
   }),
 
-  // Assessments
   rest.get("/assessments/:jobId", async (req,res,ctx) => {
     await simulateDelay();
     const jobId = Number(req.params.jobId);
@@ -85,9 +83,9 @@ export const handlers = [
     await simulateDelay();
     const jobId = Number(req.params.jobId);
     const data = await req.json();
-    // Save candidate responses locally (maybe in a new table)
     const submissions = await db.table("assessment_submissions")?.toArray().catch(()=>[]);
     await db.table("assessment_submissions")?.add({ jobId, data });
     return res(ctx.json({ success: true }));
   })
 ];
+
